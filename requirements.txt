@@ -1,0 +1,16 @@
+# The default stack is a deterministic, offline MOCK provider — it needs only
+# python-dotenv. You can run the ENTIRE repo with no key and no cost.
+python-dotenv>=1.0.0
+
+# rich renders the event stream and the capstone's output.
+rich>=13.0.0
+
+# --- Provider SDKs (optional) ---
+# Only needed if you switch PROVIDER off "mock" to run the harness against a real
+# model. Installing both lets you switch stacks with one env-var change.
+
+# OpenAI — used when PROVIDER=openai (chat + function calling).
+openai>=1.30.0
+
+# Anthropic — used when PROVIDER=claude (messages + tool use).
+anthropic>=0.111.0
