@@ -43,7 +43,7 @@ from .events import (
 )
 from .policy import ALLOW, ASK, DENY, PermissionPolicy, always_allow
 from .steer import QueueController, ScriptedController, SteerController, SteerSignal
-from .providers import ToolCall, Turn, describe, ensure_ready, provider_name, run_turn
+from .providers import Message, ToolCall, Transcript, Turn, describe, ensure_ready, provider_name, run_turn
 from .sandbox import Sandbox, SandboxError
 from .tools import (
     CALCULATOR,
@@ -103,6 +103,8 @@ __all__ = [
     "SEARCH_NOTES",
     "ToolCall",
     "Turn",
+    "Message",
+    "Transcript",
     "run_turn",
     "provider_name",
     "describe",
