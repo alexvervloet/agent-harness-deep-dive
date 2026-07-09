@@ -31,7 +31,7 @@ class Tool:
 
     name: str
     description: str
-    parameters: dict           # JSON Schema for the inputs
+    parameters: dict  # JSON Schema for the inputs
     func: Callable[[dict, Sandbox], str]
     dangerous: bool = False
 
@@ -41,8 +41,12 @@ class Tool:
 
 # --- A safe arithmetic evaluator (no eval of arbitrary Python). -------------
 _OPS = {
-    ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
-    ast.Div: operator.truediv, ast.Pow: operator.pow, ast.USub: operator.neg,
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.Pow: operator.pow,
+    ast.USub: operator.neg,
     ast.Mod: operator.mod,
 }
 
@@ -116,14 +120,22 @@ def _run_command(args: dict, sandbox: Sandbox) -> str:
 CALCULATOR = Tool(
     name="calculator",
     description="Evaluate a basic arithmetic expression, e.g. '(23 * 47) + 100'.",
-    parameters={"type": "object", "properties": {"expression": {"type": "string"}}, "required": ["expression"]},
+    parameters={
+        "type": "object",
+        "properties": {"expression": {"type": "string"}},
+        "required": ["expression"],
+    },
     func=_calculator,
 )
 
 READ_FILE = Tool(
     name="read_file",
     description="Read a UTF-8 text file from the workspace by relative path.",
-    parameters={"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]},
+    parameters={
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"],
+    },
     func=_read_file,
 )
 
@@ -142,7 +154,11 @@ WRITE_FILE = Tool(
 RUN_COMMAND = Tool(
     name="run_command",
     description="Run a shell command in the workspace (subject to the sandbox allowlist).",
-    parameters={"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]},
+    parameters={
+        "type": "object",
+        "properties": {"command": {"type": "string"}},
+        "required": ["command"],
+    },
     func=_run_command,
     dangerous=True,
 )
@@ -150,7 +166,11 @@ RUN_COMMAND = Tool(
 SEARCH_NOTES = Tool(
     name="search_notes",
     description="Search a small internal knowledge base and return the best matching note.",
-    parameters={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+    parameters={
+        "type": "object",
+        "properties": {"query": {"type": "string"}},
+        "required": ["query"],
+    },
     func=_search_notes,
 )
 
