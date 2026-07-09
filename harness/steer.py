@@ -59,7 +59,9 @@ class QueueController(SteerController):
         self._interrupt = reason
 
     def poll(self, step: int) -> SteerSignal:
-        signal = SteerSignal(messages=self._messages[:], interrupt_reason=self._interrupt)
+        signal = SteerSignal(
+            messages=self._messages[:], interrupt_reason=self._interrupt
+        )
         self._messages = []  # drained
         return signal
 
@@ -69,12 +71,16 @@ class ScriptedController(SteerController):
     number, and/or interrupt at one. `step` is how many tool-steps have completed,
     so step=1 acts after the first step, before the second model turn."""
 
-    def __init__(self, *, inject: dict[int, str] | None = None, interrupt_at: int | None = None):
+    def __init__(
+        self, *, inject: dict[int, str] | None = None, interrupt_at: int | None = None
+    ):
         self.inject = inject or {}
         self.interrupt_at = interrupt_at
 
     def poll(self, step: int) -> SteerSignal:
         return SteerSignal(
             messages=[self.inject[step]] if step in self.inject else [],
-            interrupt_reason="operator said stop" if step == self.interrupt_at else None,
+            interrupt_reason="operator said stop"
+            if step == self.interrupt_at
+            else None,
         )
