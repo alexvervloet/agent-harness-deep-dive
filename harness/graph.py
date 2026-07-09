@@ -38,7 +38,7 @@ class Graph:
     """A directed graph of nodes with conditional routing and cycles."""
 
     nodes: dict[str, Node] = field(default_factory=dict)
-    edges: dict[str, str] = field(default_factory=dict)       # unconditional next
+    edges: dict[str, str] = field(default_factory=dict)  # unconditional next
     routers: dict[str, Router] = field(default_factory=dict)  # state -> next node
 
     def node(self, name: str, fn: Node) -> "Graph":
@@ -56,7 +56,9 @@ class Graph:
         self.routers[frm] = router
         return self
 
-    def run(self, start: str, state: dict, *, max_visits: int = 50) -> tuple[dict, list[str]]:
+    def run(
+        self, start: str, state: dict, *, max_visits: int = 50
+    ) -> tuple[dict, list[str]]:
         """Execute from `start` until a node routes to END (or `max_visits` guards
         against a runaway cycle). Returns the final state and the path taken."""
         current = start
