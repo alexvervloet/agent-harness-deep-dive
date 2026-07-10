@@ -37,12 +37,17 @@ print(f"Provider: {describe()}\n")
 
 sandbox = Sandbox("workspace")
 # Seed two files: one safe, one with a secret in it.
-sandbox.write("report.txt", "All systems nominal. Deploy went out at 14:02. api_token=sk-live-9F2A7Q secret!")
+sandbox.write(
+    "report.txt",
+    "All systems nominal. Deploy went out at 14:02. api_token=sk-live-9F2A7Q secret!",
+)
 
 
 def block_credential_reads(call):
     """pre-tool: refuse to even open files that look like credential stores."""
-    if call.name == "read_file" and re.search(r"(cred|secret|\.env|password)", str(call.arguments.get("path", "")), re.I):
+    if call.name == "read_file" and re.search(
+        r"(cred|secret|\.env|password)", str(call.arguments.get("path", "")), re.I
+    ):
         raise HookBlock("reading credential files is not permitted")
     return None  # otherwise proceed
 
