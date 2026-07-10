@@ -29,7 +29,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 
-from harness import Checkpointer, Harness, RUNNING, Sandbox, ToolFinished, describe, ensure_ready
+from harness import (
+    Checkpointer,
+    Harness,
+    RUNNING,
+    Sandbox,
+    ToolFinished,
+    describe,
+    ensure_ready,
+)
 from harness.tools import CALCULATOR, READ_FILE
 
 load_dotenv()
@@ -55,22 +63,31 @@ def drain(harness, task, run_id, crash_after_tool=False):
 drain(Harness("You are careful.", tools, sandbox=sandbox), "compute (2 + 2).", "done-1")
 
 # 2. A job capped at one step but given a two-step task -> gives up -> failed.
-drain(Harness("You are careful.", tools, sandbox=sandbox, max_steps=1),
-      "read the file notes.txt and compute (5 * 5).", "failed-1")
+drain(
+    Harness("You are careful.", tools, sandbox=sandbox, max_steps=1),
+    "read the file notes.txt and compute (5 * 5).",
+    "failed-1",
+)
 
 # 3. A job whose process 'crashes' after the first tool -> left running.
-drain(Harness("You are careful.", tools, sandbox=sandbox),
-      "read the file notes.txt and compute (9 * 9).", "crashed-1", crash_after_tool=True)
+drain(
+    Harness("You are careful.", tools, sandbox=sandbox),
+    "read the file notes.txt and compute (9 * 9).",
+    "crashed-1",
+    crash_after_tool=True,
+)
 
 print("The durable run-state log (what a queue or dashboard would show):\n")
 print(f"  {'run_id':<12} {'status':<9} {'steps':>5}  answer")
-print(f"  {'-'*12} {'-'*9} {'-'*5}  {'-'*30}")
+print(f"  {'-' * 12} {'-' * 9} {'-' * 5}  {'-' * 30}")
 for r in cp.records():
     print(f"  {r.run_id:<12} {r.status:<9} {r.steps:>5}  {r.answer[:40]}")
 
 # Find the crashed run and resume it — no need to know anything but its id.
 stuck = [r for r in cp.records() if r.status == RUNNING]
-print(f"\n{len(stuck)} run(s) are stuck in 'running' (a crashed process). Resuming them:\n")
+print(
+    f"\n{len(stuck)} run(s) are stuck in 'running' (a crashed process). Resuming them:\n"
+)
 for r in stuck:
     resumed = Harness("You are careful.", tools, sandbox=sandbox)
     for event in resumed.run(r.task, run_id=r.run_id, checkpointer=cp):
@@ -78,7 +95,7 @@ for r in stuck:
 
 print("\nThe log after resuming:\n")
 print(f"  {'run_id':<12} {'status':<9} {'steps':>5}")
-print(f"  {'-'*12} {'-'*9} {'-'*5}")
+print(f"  {'-' * 12} {'-' * 9} {'-' * 5}")
 for r in cp.records():
     print(f"  {r.run_id:<12} {r.status:<9} {r.steps:>5}")
 
