@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 
-from harness import Sandbox, default_tools, describe, ensure_ready, run_turn
+from harness import Sandbox, Transcript, default_tools, describe, ensure_ready, run_turn
 
 load_dotenv()
 ensure_ready()
@@ -32,17 +32,28 @@ sandbox = Sandbox("workspace")
 by_name = {t.name: t for t in tools}
 
 # --- The whole agent, hand-written, exactly as in the Agents dive. ----------
-transcript = [{"role": "user", "content": "What is (23 * 47) + 100?"}]
+transcript: Transcript = [{"role": "user", "content": "What is (23 * 47) + 100?"}]
 for _ in range(8):  # a bare step cap; nothing else guards this loop
     turn = run_turn(SYSTEM, transcript, tools)
     if not turn.tool_calls:
         print("Final answer:", turn.text)
         break
-    transcript.append({"role": "assistant", "text": turn.text, "tool_calls": turn.tool_calls})
+    transcript.append(
+        {"role": "assistant", "text": turn.text, "tool_calls": turn.tool_calls}
+    )
     for call in turn.tool_calls:
         print(f"  [loop] running {call.name}({call.arguments})")
-        result = by_name[call.name].run(call.arguments, sandbox)  # no gate, no hook, no policy
-        transcript.append({"role": "tool", "tool_call_id": call.id, "name": call.name, "content": result})
+        result = by_name[call.name].run(
+            call.arguments, sandbox
+        )  # no gate, no hook, no policy
+        transcript.append(
+            {
+                "role": "tool",
+                "tool_call_id": call.id,
+                "name": call.name,
+                "content": result,
+            }
+        )
 
 print(
     "\nThat's the loop — and it's fine for a calculator. But notice what it CAN'T do:\n"
