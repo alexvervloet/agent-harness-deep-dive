@@ -72,9 +72,17 @@ def scripted_planner(screenshot: str) -> tuple[str, str]:
     if "Dashboard" in screenshot:
         return ("done", "")
     if "username=[(empty)]" in screenshot:
-        return ("type", "dana") if "focus=username" in screenshot else ("click", "username")
+        return (
+            ("type", "dana")
+            if "focus=username" in screenshot
+            else ("click", "username")
+        )
     if "password=[(empty)]" in screenshot:
-        return ("type", "hunter2") if "focus=password" in screenshot else ("click", "password")
+        return (
+            ("type", "hunter2")
+            if "focus=password" in screenshot
+            else ("click", "password")
+        )
     return ("click", "Sign in")
 
 
@@ -84,14 +92,14 @@ print(f"Goal: {goal}\n")
 print("Observe → act → observe loop:")
 
 for step in range(8):
-    shot = screen.screenshot()              # 1. observe (a "screenshot")
+    shot = screen.screenshot()  # 1. observe (a "screenshot")
     print(f"  step {step}: {shot}")
-    action, arg = scripted_planner(shot)    # 2. model picks an action
+    action, arg = scripted_planner(shot)  # 2. model picks an action
     if action == "done":
         print(f"  step {step}: goal reached — the agent stops.")
         break
     print(f"           -> action: {action} {arg!r}")
-    screen.apply(action, arg)               # 3. harness performs it; loop re-observes
+    screen.apply(action, arg)  # 3. harness performs it; loop re-observes
 
 print(
     "\nThat's computer use: the exact observe → act → observe loop from the rest of\n"
