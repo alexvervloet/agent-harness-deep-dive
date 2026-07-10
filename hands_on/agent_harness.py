@@ -52,7 +52,7 @@ from harness import (
     describe,
     ensure_ready,
 )
-from harness.tools import CALCULATOR, SEARCH_NOTES
+from harness.tools import SEARCH_NOTES
 
 
 def build_agent(*, auto_approve: bool, max_steps: int) -> Harness:
@@ -63,11 +63,15 @@ def build_agent(*, auto_approve: bool, max_steps: int) -> Harness:
         if auto_approve:
             print(f"  [auto-approved] {call.name}({call.arguments})", file=sys.stderr)
             return True
-        answer = input(f"  Approve {call.name}({call.arguments})? [y/N] ").strip().lower()
+        answer = (
+            input(f"  Approve {call.name}({call.arguments})? [y/N] ").strip().lower()
+        )
         return answer in ("y", "yes")
 
     def redact(_call, result):  # post-tool hook: never surface secrets
-        return re.sub(r"(sk-[A-Za-z0-9\-]+|api_token=\S+|password=\S+)", "[REDACTED]", result)
+        return re.sub(
+            r"(sk-[A-Za-z0-9\-]+|api_token=\S+|password=\S+)", "[REDACTED]", result
+        )
 
     agent = Harness(
         "You are a capable assistant. Do arithmetic yourself; delegate lookups to research.",
@@ -90,13 +94,27 @@ def build_agent(*, auto_approve: bool, max_steps: int) -> Harness:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="A configured agent harness (offline on the mock by default).")
-    parser.add_argument("task", nargs="?",
-                        default="Look up the plans and prices, then compute a year of Pro (30 * 12).")
-    parser.add_argument("--yes", action="store_true", help="auto-approve tools with an `ask` policy")
-    parser.add_argument("--json", action="store_true", help="emit a headless JSON record instead of a live trace")
+    parser = argparse.ArgumentParser(
+        description="A configured agent harness (offline on the mock by default)."
+    )
+    parser.add_argument(
+        "task",
+        nargs="?",
+        default="Look up the plans and prices, then compute a year of Pro (30 * 12).",
+    )
+    parser.add_argument(
+        "--yes", action="store_true", help="auto-approve tools with an `ask` policy"
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="emit a headless JSON record instead of a live trace",
+    )
     parser.add_argument("--max-steps", type=int, default=8)
-    parser.add_argument("--run-id", help="checkpoint under this id; re-run with the same id to RESUME a crashed run")
+    parser.add_argument(
+        "--run-id",
+        help="checkpoint under this id; re-run with the same id to RESUME a crashed run",
+    )
     args = parser.parse_args()
 
     load_dotenv()
@@ -111,7 +129,14 @@ def main() -> int:
     if not args.json:
         print(f"Provider: {describe()}\nTask: {args.task}\n\nEvent stream:")
 
-    record = {"provider": describe(), "task": args.task, "tools_run": [], "blocked": [], "answer": "", "steps": 0}
+    record = {
+        "provider": describe(),
+        "task": args.task,
+        "tools_run": [],
+        "blocked": [],
+        "answer": "",
+        "steps": 0,
+    }
     for event in agent.run(args.task, run_id=args.run_id, checkpointer=checkpointer):
         if not args.json:
             print("  " + event.line())
