@@ -43,10 +43,21 @@ ensure_ready()
 
 task = sys.argv[1] if len(sys.argv) > 1 else "What is (23 * 47) + 100?"
 
-agent = Harness("You are a batch worker. Use tools; be terse.", default_tools(), sandbox=Sandbox("workspace"))
+agent = Harness(
+    "You are a batch worker. Use tools; be terse.",
+    default_tools(),
+    sandbox=Sandbox("workspace"),
+)
 
 # Fold the event stream into a structured record — no printing mid-run.
-record = {"provider": describe(), "task": task, "tools_run": [], "blocked": [], "answer": "", "steps": 0}
+record = {
+    "provider": describe(),
+    "task": task,
+    "tools_run": [],
+    "blocked": [],
+    "answer": "",
+    "steps": 0,
+}
 
 
 def collect(event):
