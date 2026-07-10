@@ -57,7 +57,9 @@ print("Event stream (operator steers, then interrupts):")
 for event in agent.run("Look up the plans and prices.", controller=controller):
     print("  " + event.line())
     if isinstance(event, Steered):
-        print("     ↳ the injected message becomes the newest user turn — it steers the next step.")
+        print(
+            "     ↳ the injected message becomes the newest user turn — it steers the next step."
+        )
     if isinstance(event, Interrupted):
         print("     ↳ the run stopped at a step boundary, not mid-tool.")
 
