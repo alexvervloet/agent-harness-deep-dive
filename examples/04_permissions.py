@@ -27,7 +27,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 
-from harness import ALLOW, Harness, PermissionPolicy, Sandbox, default_tools, describe, ensure_ready
+from harness import (
+    ALLOW,
+    Harness,
+    PermissionPolicy,
+    Sandbox,
+    default_tools,
+    describe,
+    ensure_ready,
+)
 
 load_dotenv()
 ensure_ready()
@@ -35,8 +43,8 @@ print(f"Provider: {describe()}\n")
 
 policy = (
     PermissionPolicy(default=ALLOW)
-    .ask("write_file")     # writes need a human
-    .deny("run_command")   # shell is out of bounds for this agent
+    .ask("write_file")  # writes need a human
+    .deny("run_command")  # shell is out of bounds for this agent
 )
 
 # Auto-approve here so the example runs unattended; a real app would prompt.
@@ -49,8 +57,8 @@ agent = Harness(
 )
 
 for task in [
-    "write file plan.txt containing: ship the harness dive",   # ask -> approved
-    "run the command rm -rf /",                                 # deny -> blocked
+    "write file plan.txt containing: ship the harness dive",  # ask -> approved
+    "run the command rm -rf /",  # deny -> blocked
 ]:
     print(f"Task: {task}")
     for event in agent.run(task):
