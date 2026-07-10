@@ -40,7 +40,7 @@ research = Subagent(
     name="research",
     description="Delegate a factual lookup. Input: a `task` describing what to find.",
     system="You answer factual questions using the search_notes tool, then report back.",
-    tools=[SEARCH_NOTES],   # the orchestrator does NOT have this tool
+    tools=[SEARCH_NOTES],  # the orchestrator does NOT have this tool
 )
 
 orchestrator = Harness(
