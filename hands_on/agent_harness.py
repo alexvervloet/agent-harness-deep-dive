@@ -1,10 +1,9 @@
 """
-Capstone — a configured harness you can actually drive.
-=======================================================
+Capstone: a configured harness you can actually drive.
 
 Everything assembled: a harness with a real permission policy, a sandboxed
 workspace, a redaction hook, a research subagent, and a choice of live event trace
-or headless JSON. It's the library from this dive wired to a CLI — read it to see
+or headless JSON. It's the library from this dive wired to a CLI; read it to see
 how the pieces compose.
 
     # One-off task with a live event trace (offline on the mock): the agent
@@ -18,13 +17,13 @@ how the pieces compose.
     python hands_on/agent_harness.py "What is (23 * 47) + 100?" --json
 
     # Durable run: checkpoint under an id. Re-run with the same id to RESUME (if the
-    # first run was interrupted) — completed steps are loaded from disk, not redone.
+    # first run was interrupted); completed steps are loaded from disk, not redone.
     python hands_on/agent_harness.py "read the file plan.txt and compute (2 + 2)." --run-id job1
 
     # Raise the step ceiling:
     python hands_on/agent_harness.py "..." --max-steps 12
 
-By default `write_file` is gated (ask) and `run_command` is denied — deny wins even
+By default `write_file` is gated (ask) and `run_command` is denied; deny wins even
 with --yes, because --yes only auto-answers `ask`, it doesn't override `deny`.
 """
 
