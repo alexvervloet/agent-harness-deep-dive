@@ -1,19 +1,19 @@
 """
-harness — a small, from-scratch agent *harness*, built to be read.
+harness: a small, from-scratch agent *harness*, built to be read.
 
 The Agents dive taught the loop. This teaches the layer that runs the loop for you
 and adds the things production agent work is actually made of:
 
-  providers.py — the ONLY provider file: a deterministic mock (default) + openai/claude
-  tools.py     — what a tool is + a sandboxed toolbox
-  sandbox.py   — the boundary tools execute inside (path jail + command allowlist)
-  policy.py    — a declarative allow/ask/deny permission policy
-  events.py    — the typed event stream the harness emits
-  checkpoint.py— durable run state: persist the transcript, resume after a crash
-  steer.py     — steering controllers: inject / queue / interrupt a running run
-  orchestrate.py— fan out to many subagents concurrently, then join (map-reduce)
-  graph.py     — orchestration as a graph: nodes, conditional routing, cycles
-  core.py      — the Harness: the loop, wrapped, with hooks + policy + sandbox + subagents
+  providers.py  the ONLY provider file: a deterministic mock (default) + openai/claude
+  tools.py      what a tool is + a sandboxed toolbox
+  sandbox.py    the boundary tools execute inside (path jail + command allowlist)
+  policy.py     a declarative allow/ask/deny permission policy
+  events.py     the typed event stream the harness emits
+  checkpoint.py durable run state: persist the transcript, resume after a crash
+  steer.py      steering controllers: inject / queue / interrupt a running run
+  orchestrate.py fan out to many subagents concurrently, then join (map-reduce)
+  graph.py      orchestration as a graph: nodes, conditional routing, cycles
+  core.py       the Harness: the loop, wrapped, with hooks + policy + sandbox + subagents
 
 Typical use:
 

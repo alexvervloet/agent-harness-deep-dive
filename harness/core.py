@@ -1,20 +1,19 @@
 """
-harness/core.py — the harness: the loop, wrapped, with places to intervene.
-===========================================================================
+harness/core.py: the harness: the loop, wrapped, with places to intervene.
 
 This is the payoff of the whole dive. In the Agents dive you *wrote* the loop. A
 harness runs the loop for you and gives you five things a bare loop doesn't:
 
-  1. an event stream        — you observe/react instead of reading print()s
-  2. hooks                  — intercept each tool call (block it, or edit its result)
-  3. a permission policy    — declarative allow/ask/deny, lifted out of the loop
-  4. a sandbox              — the boundary tools execute inside
-  5. subagents              — delegate to a nested harness with its own context
+  1. an event stream        you observe/react instead of reading print()s
+  2. hooks                  intercept each tool call (block it, or edit its result)
+  3. a permission policy    declarative allow/ask/deny, lifted out of the loop
+  4. a sandbox              the boundary tools execute inside
+  5. subagents              delegate to a nested harness with its own context
 
 `Harness.run(task)` is a generator: it yields typed events (see events.py) and
 threads every tool call through policy → hooks → sandbox. Read it once and the
 real harnesses (Claude Agent SDK, OpenAI Agents SDK, Managed Agents) stop being
-magic — they're this, hardened and hosted.
+magic; they're this, hardened and hosted.
 """
 
 from __future__ import annotations
@@ -118,7 +117,7 @@ class Harness:
                     "properties": {"task": {"type": "string"}},
                     "required": ["task"],
                 },
-                func=lambda *_: "",  # never called directly — the harness intercepts
+                func=lambda *_: "",  # never called directly; the harness intercepts
             )
             for s in self.subagents.values()
         ]
@@ -146,7 +145,7 @@ class Harness:
             resumed = checkpointer.load(run_id)
 
         if resumed is not None and resumed.status == DONE:
-            # Already finished in a previous process — nothing to redo.
+            # Already finished in a previous process, so nothing to redo.
             yield RunFinished(depth=_depth, answer=resumed.answer, steps=resumed.steps)
             self.last_answer = resumed.answer
             return
@@ -277,7 +276,7 @@ class Harness:
                     else:
                         try:
                             result = tool.run(call.arguments, self.sandbox)
-                        except Exception as e:  # noqa: BLE001 — errors go back as results
+                        except Exception as e:  # noqa: BLE001. Errors go back as results
                             result = f"Error: {e}"
 
                 # 5. Post-tool hooks (transform the result, e.g. redact).
@@ -320,7 +319,7 @@ class Harness:
     def _checkpoint(
         self, checkpointer, run_id, task, transcript, steps, status, answer=""
     ):
-        """Persist the run's resumable state after a step — if a checkpointer is
+        """Persist the run's resumable state after a step, if a checkpointer is
         attached. No-op otherwise, so non-durable runs pay nothing."""
         if checkpointer is None or run_id is None:
             return

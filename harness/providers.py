@@ -1,6 +1,5 @@
 """
-harness/providers.py — the ONLY provider-specific file.
-=======================================================
+harness/providers.py: the ONLY provider-specific file.
 
 Same keystone as every sibling repo: hide the model call behind a tiny neutral
 interface so the harness above it is provider-agnostic. The harness keeps a
@@ -11,7 +10,7 @@ interface so the harness above it is provider-agnostic. The harness keeps a
 Pick your stack with `PROVIDER` in `.env`:
 
   PROVIDER=mock   ->  a deterministic, offline tool-calling "model". No key, no
-                      cost. **The default** — the harness primitives are
+                      cost. **The default**, since the harness primitives are
                       provider-neutral, so a mock model shows every one of them.
   PROVIDER=openai ->  OpenAI chat + function calling   (OPENAI_API_KEY)
   PROVIDER=claude ->  Claude messages + tool use       (ANTHROPIC_API_KEY)
@@ -64,7 +63,7 @@ class Turn:
 
 # The neutral transcript: a list of loosely-typed message dicts. The three shapes
 # are documented in the module docstring above (user / assistant / tool). It's
-# deliberately `dict[str, Any]` — the harness threads these dicts through unchanged,
+# deliberately `dict[str, Any]`: the harness threads these dicts through unchanged,
 # and each provider adapter reshapes them into its own SDK's message format.
 Message = dict[str, Any]
 Transcript = list[Message]
@@ -83,14 +82,14 @@ _warned_fallback = False
 
 
 def _warn_mock_fallback(p: str) -> None:
-    """Announce — loudly, but only once — that we degraded to the mock, and why."""
+    """Announce, loudly but only once, that we degraded to the mock, and why."""
     global _warned_fallback
     if _warned_fallback:
         return
     _warned_fallback = True
     missing = ", ".join(_KEYS.get(p, []))
     print(
-        f"\n⚠  PROVIDER={p} is set, but {missing} isn't on the environment — did you\n"
+        f"\n⚠  PROVIDER={p} is set, but {missing} isn't on the environment. Did you\n"
         f"   forget `secrun`? Falling back to the offline mock so this still runs.\n"
         f"   Real model:  secrun python <script>   |   Hard error instead:  PROVIDER_STRICT=1\n",
         file=sys.stderr,
@@ -101,8 +100,8 @@ def provider_name() -> str:
     """The active stack: 'mock' (default), 'openai', or 'claude'.
 
     If a real provider is selected but its key isn't on the environment (the
-    classic "forgot `secrun`"), degrade to the offline mock — loudly, and only
-    once — so a demo keeps running instead of dying on a missing key. This is the
+    classic "forgot `secrun`"), degrade to the offline mock, loudly and only
+    once, so a demo keeps running instead of dying on a missing key. This is the
     *opposite* of a silent fallback: a stderr banner and `describe()` both announce
     it, so you can never mistake a keyless mock run for a real one. Set
     PROVIDER_STRICT=1 to make the missing key a hard error instead (recommended for
@@ -126,7 +125,7 @@ def describe() -> str:
     if p == "mock" and configured != "mock":
         return (
             f"mock  (FALLBACK: PROVIDER={configured} is set but its key isn't on the "
-            f"environment — run under `secrun` for the real model)"
+            f"environment; run under `secrun` for the real model)"
         )
     if p == "mock":
         return f"mock  (offline, deterministic, model={_MOCK_MODEL}, no key)"
@@ -155,7 +154,7 @@ def ensure_ready() -> None:
 
 
 # ---------------------------------------------------------------------------
-# The mock planner — deterministic, rule-based tool selection.
+# The mock planner: deterministic, rule-based tool selection.
 # ---------------------------------------------------------------------------
 def _last_user(transcript: Transcript) -> str:
     for e in reversed(transcript):
@@ -170,7 +169,7 @@ _MATH_RE = re.compile(r"[-+]?[(\d][\d\s+\-*/().]*[\d)]")
 def _detect_intents(user: str, tool_names: set[str]) -> list[ToolCall]:
     """Parse a request into an ORDERED list of tool calls, one per detected intent,
     sorted by where each trigger appears in the text. This is what lets the mock
-    chain steps deterministically — 'look up X, then compute Y' becomes
+    chain steps deterministically: 'look up X, then compute Y' becomes
     [research, calculator] in that order. Conservative: an intent is added only
     when its arguments parse cleanly.
 
@@ -277,7 +276,7 @@ def _detect_intents(user: str, tool_names: set[str]) -> list[ToolCall]:
 
 
 def _mock_final(transcript: Transcript, intents: list[ToolCall]) -> str:
-    """Compose the final answer from every tool result, in intent order — so a
+    """Compose the final answer from every tool result, in intent order, so a
     lookup-then-compute request reports BOTH the lookup and the computation."""
     results: dict[str, str] = {}
     for e in transcript:
@@ -293,7 +292,7 @@ def _mock_final(transcript: Transcript, intents: list[ToolCall]) -> str:
         elif tc.name == "read_file":
             parts.append(f"The file contains: {r}")
         elif tc.name == "write_file":
-            parts.append(f"Done — wrote {r}.")
+            parts.append(f"Done. Wrote {r}.")
         else:  # research / search_notes already phrase a full answer
             parts.append(r)
     return " ".join(parts) if parts else "I don't have a tool that fits that request."
@@ -308,14 +307,14 @@ def _mock_turn(system: str, transcript: Transcript, tools: list) -> Turn:
         if e.get("role") == "assistant"
         for c in (e.get("tool_calls") or [])
     }
-    for tc in intents:  # issue the next un-run intent — this is what chains steps
+    for tc in intents:  # issue the next un-run intent; this is what chains steps
         if tc.name not in already_called:
             return Turn(text=None, tool_calls=[tc])
     return Turn(text=_mock_final(transcript, intents), tool_calls=[])
 
 
 # ---------------------------------------------------------------------------
-# Real providers — created lazily; translate the neutral transcript to each
+# Real providers: created lazily; translate the neutral transcript to each
 # provider's tool-calling shape (the same normalization as the Agents dive).
 # ---------------------------------------------------------------------------
 @lru_cache(maxsize=1)

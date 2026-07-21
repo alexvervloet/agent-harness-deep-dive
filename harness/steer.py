@@ -1,21 +1,20 @@
 """
-harness/steer.py — steering a running agent: interrupt, inject, queue.
-======================================================================
+harness/steer.py: steering a running agent: interrupt, inject, queue.
 
-The permission policy (policy.py) gates a tool *before* it runs — a synchronous
+The permission policy (policy.py) gates a tool *before* it runs: a synchronous
 yes/no. Steering is the other half of operator control: acting on a run *while it's
 in flight*. Three moves, all of which a good harness supports and a bare loop
 can't:
 
-  - INJECT  — drop a message into the run mid-flight ("actually, use the Pro plan")
+  - INJECT: drop a message into the run mid-flight ("actually, use the Pro plan")
               so it changes the *next* step, without restarting.
-  - QUEUE   — send follow-up messages while the agent is busy; they're processed in
+  - QUEUE: send follow-up messages while the agent is busy; they're processed in
               order at the next safe boundary.
-  - INTERRUPT — tell the run to stop. A good agent doesn't die mid-tool; it finishes
+  - INTERRUPT: tell the run to stop. A good agent doesn't die mid-tool; it finishes
               the current step and halts at the next boundary.
 
 The harness polls a **controller** at each step boundary (between model turns,
-after any tool results are in — a safe place to change course). This file gives you
+after any tool results are in, a safe place to change course). This file gives you
 two controllers: a live `QueueController` you drive from your app, and a
 `ScriptedController` that's deterministic for demos and tests. This is the
 from-scratch shape of Managed Agents' message queue + `user.interrupt` +

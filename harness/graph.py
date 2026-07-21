@@ -1,21 +1,20 @@
 """
-harness/graph.py — orchestration as a graph: nodes, routing, cycles.
-====================================================================
+harness/graph.py: orchestration as a graph: nodes, routing, cycles.
 
 The harness loop lets the *model* drive: it picks the next step. But a lot of
-orchestration is the opposite — the path IS knowable, and you want *code* to drive
+orchestration is the opposite: the path IS knowable, and you want *code* to drive
 it: classify a ticket, route it to the right handler, run a quality gate, loop back
 to revise if it fails, then send. That's a **graph**: nodes (units of work) wired
 by edges, with conditional routing and cycles. It's the model behind LangGraph and
 every "agent workflow" builder.
 
 This is a tiny one. A **node** is a function `state -> state` (it can run plain
-code, call a tool, or run a whole Harness — the graph doesn't care what's inside).
+code, call a tool, or run a whole Harness; the graph doesn't care what's inside).
 Edges connect nodes; a **router** picks the next node from the current state, which
 is what gives you branching and loops. `END` stops the graph.
 
 When to reach for this vs. the agent loop: if you can draw the flowchart, build a
-graph — it's cheaper, predictable, and testable (the "workflow vs. agent" call from
+graph. It's cheaper, predictable, and testable (the "workflow vs. agent" call from
 the Agents dive, made concrete). Reach for the model-driven loop only when the path
 genuinely can't be known up front. Real systems mix both: graph nodes that each run
 an agent.

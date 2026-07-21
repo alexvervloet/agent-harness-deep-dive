@@ -1,15 +1,14 @@
 """
-harness/checkpoint.py — durable run state: survive a crash, resume where you left off.
-======================================================================================
+harness/checkpoint.py: durable run state: survive a crash, resume where you left off.
 
-A long-horizon agent can run for minutes or hours. If the process dies — a deploy,
-an out-of-memory kill, a timeout, a machine reboot — an in-memory loop loses
+A long-horizon agent can run for minutes or hours. If the process dies (a deploy,
+an out-of-memory kill, a timeout, a machine reboot) an in-memory loop loses
 *everything* and has to start over, re-paying for every tool call and model turn it
 already completed. Production agents don't accept that. They **checkpoint**: after
 each step they persist enough state to resume exactly where they stopped, in a
 fresh process, having redone nothing.
 
-The elegant part is that the harness already carries the resumable state — the
+The elegant part is that the harness already carries the resumable state: the
 **transcript** (every user turn, tool call, and tool result so far). Because the
 loop feeds each tool result back into the transcript, persisting the transcript IS
 the checkpoint: reload it into a new harness and keep looping, and the model, seeing
@@ -19,7 +18,7 @@ Temporal-style durable workflows, Managed Agents' server-side session state).
 
 This file is a tiny, teachable version: one JSON file per run under a directory.
 `save` after each step, `load` to resume, `records` to list every run's task state
-(queued / running / done / failed) — the durable "run log" a queue or dashboard
+(queued / running / done / failed): the durable "run log" a queue or dashboard
 would query.
 """
 
@@ -32,9 +31,9 @@ from dataclasses import dataclass, field
 
 from .providers import ToolCall, Transcript
 
-# Run-status values — the durable task-state lifecycle.
+# Run-status values: the durable task-state lifecycle.
 QUEUED = "queued"  # created, not started
-RUNNING = "running"  # in progress (or crashed mid-run — a checkpoint to resume)
+RUNNING = "running"  # in progress (or crashed mid-run, a checkpoint to resume)
 DONE = "done"  # finished with an answer
 FAILED = "failed"  # gave up (e.g. hit the step limit) without completing
 INTERRUPTED = "interrupted"  # stopped early by an operator (steering); resumable
@@ -42,7 +41,7 @@ INTERRUPTED = "interrupted"  # stopped early by an operator (steering); resumabl
 
 @dataclass
 class RunState:
-    """Everything needed to resume a run — the checkpoint payload."""
+    """Everything needed to resume a run: the checkpoint payload."""
 
     run_id: str
     task: str
@@ -125,7 +124,7 @@ class Checkpointer:
             pass
 
     def records(self) -> list[RunState]:
-        """Every persisted run, oldest first — the durable task-state log."""
+        """Every persisted run, oldest first: the durable task-state log."""
         states = []
         for name in os.listdir(self.root):
             if name.endswith(".json"):

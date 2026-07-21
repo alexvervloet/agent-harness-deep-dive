@@ -1,6 +1,5 @@
 """
-harness/tools.py — what a tool is, and a small sandboxed toolbox.
-=================================================================
+harness/tools.py: what a tool is, and a small sandboxed toolbox.
 
 Same definition as the Agents dive: to your code a tool is a function; to the
 model it's a name, a description, and a JSON Schema. The one addition here is that
@@ -26,7 +25,7 @@ class Tool:
     """A callable the model can request. `func(args, sandbox) -> str`.
 
     `dangerous=True` marks tools with real-world consequences (writing files,
-    running commands, spending money) — the permission policy and the capstone
+    running commands, spending money); the permission policy and the capstone
     use it to decide what needs a human in the loop."""
 
     name: str
@@ -91,7 +90,7 @@ _NOTES = {
 
 
 def _words(text: str) -> set[str]:
-    """Lowercase alphanumeric words — so 'plans,' and 'Plans:' both match 'plans'
+    """Lowercase alphanumeric words, so 'plans,' and 'Plans:' both match 'plans'
     (punctuation stuck to a word must not defeat the lookup)."""
     import re
 

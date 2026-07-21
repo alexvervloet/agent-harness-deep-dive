@@ -1,20 +1,19 @@
 """
-harness/policy.py — a declarative permission policy.
-====================================================
+harness/policy.py: a declarative permission policy.
 
 The Agents dive gated dangerous tools with an ad-hoc `approve` callback threaded
-through the loop. That works, but the *policy* — which tools are free, which need a
-human, which are forbidden — lived tangled in the loop code. A harness lifts it out
+through the loop. That works, but the *policy* (which tools are free, which need a
+human, which are forbidden) lived tangled in the loop code. A harness lifts it out
 into a **declarative policy** you can read, diff, and version on its own.
 
 Three verdicts, reject-leaning by default:
 
-  allow  — run it, no questions asked (read-only, cheap, reversible)
-  ask    — pause and ask a human before running (writes, spends, sends)
-  deny   — never run it (out of bounds for this agent)
+  allow  run it, no questions asked (read-only, cheap, reversible)
+  ask    pause and ask a human before running (writes, spends, sends)
+  deny   never run it (out of bounds for this agent)
 
 This is the same idea as Claude Agent SDK / Claude Code permission modes and
-Managed Agents' `always_allow` / `always_ask` per-tool config — a policy object
+Managed Agents' `always_allow` / `always_ask` per-tool config: a policy object
 the harness consults on every tool call, separate from the loop itself.
 """
 

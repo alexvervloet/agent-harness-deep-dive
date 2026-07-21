@@ -1,11 +1,10 @@
 """
-harness/events.py — the harness speaks in events, not print statements.
-========================================================================
+harness/events.py: the harness speaks in events, not print statements.
 
 The bare agent loop (from the Agents dive) is a `while` loop that occasionally
 `print()`s. A harness turns that loop *inside out*: instead of you writing the
 loop and sprinkling prints, the harness runs the loop and emits a **stream of
-typed events** — one per thing that happens. You (or a UI, or a log pipeline, or
+typed events**, one per thing that happens. You (or a UI, or a log pipeline, or
 a test) consume that stream.
 
 That inversion is the whole reason a harness is worth adopting: every event is a
@@ -24,7 +23,7 @@ from .providers import ToolCall
 
 @dataclass(kw_only=True)
 class Event:
-    """Base class — every event carries the run's depth (0 = main agent, 1 = a
+    """Base class. Every event carries the run's depth (0 = main agent, 1 = a
     subagent) so a UI can indent nested work."""
 
     depth: int = 0
@@ -108,7 +107,7 @@ class SubagentFinished(Event):
 
 @dataclass(kw_only=True)
 class Resumed(Event):
-    """A run was reloaded from a checkpoint and continued — not started fresh."""
+    """A run was reloaded from a checkpoint and continued, not started fresh."""
 
     run_id: str = ""
     steps: int = 0
