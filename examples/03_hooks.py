@@ -1,18 +1,17 @@
 """
-Example 03 — hooks: intercept the loop without editing it.
-==========================================================
+Example 03: hooks: intercept the loop without editing it.
 
 A hook is a function the harness calls at a fixed point in every tool cycle. Two
 kinds here:
 
-  pre-tool  — runs before a tool executes. Return a string to substitute a result
+  pre-tool  runs before a tool executes. Return a string to substitute a result
               (short-circuit the tool), or raise HookBlock(reason) to block it.
-  post-tool — runs after a tool executes. Transform the result before it re-enters
-              the model's context — the natural place to REDACT secrets.
+  post-tool runs after a tool executes. Transform the result before it re-enters
+              the model's context, the natural place to REDACT secrets.
 
 Hooks are how a harness lets you enforce policy that the loop knows nothing about.
 Here: a pre-tool hook blocks reads of anything that looks like a credentials file,
-and a post-tool hook redacts an API key that slips through in a file's contents —
+and a post-tool hook redacts an API key that slips through in a file's contents 
 so the model (and your logs) never see the raw secret.
 
 Run it:
@@ -70,7 +69,7 @@ for task in ["read report.txt", "read secrets.txt"]:
     print()
 
 print(
-    "The first read ran but its API token was redacted by the post-tool hook — the\n"
+    "The first read ran but its API token was redacted by the post-tool hook, so the\n"
     "model summarized a file it was never shown the secret from. The second read was\n"
     "blocked outright by the pre-tool hook, before the tool touched disk. Neither the\n"
     "loop nor the tool changed; the harness enforced both rules at its seams. This is\n"

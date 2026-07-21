@@ -1,14 +1,13 @@
 """
-Example 12 — steering a running agent: inject and interrupt, mid-run.
-=====================================================================
+Example 12: steering a running agent: inject and interrupt, mid-run.
 
 The permission policy (example 04) gates a tool *before* it runs. Steering is the
 other half of operator control: acting on a run *while it's in flight*. Two moves
 here, both of which a bare loop can't do:
 
-  - INJECT  — drop a message into the run mid-flight so it changes the NEXT step,
+  - INJECT: drop a message into the run mid-flight so it changes the NEXT step,
               without restarting ("actually, I only care about Pro").
-  - INTERRUPT — tell the run to stop. A good agent doesn't die mid-tool; it finishes
+  - INTERRUPT: tell the run to stop. A good agent doesn't die mid-tool; it finishes
               the current step and halts at the next safe boundary.
 
 The harness polls a **controller** at each step boundary (between model turns,
@@ -58,7 +57,7 @@ for event in agent.run("Look up the plans and prices.", controller=controller):
     print("  " + event.line())
     if isinstance(event, Steered):
         print(
-            "     ↳ the injected message becomes the newest user turn — it steers the next step."
+            "     -> the injected message becomes the newest user turn; it steers the next step."
         )
     if isinstance(event, Interrupted):
         print("     ↳ the run stopped at a step boundary, not mid-tool.")
@@ -67,7 +66,7 @@ print(
     "\nTwo operator controls the bare loop never had: the agent changed course from the\n"
     "injected message (lookup → calculation) without a restart, and it stopped cleanly\n"
     "when interrupted rather than being killed mid-tool. In a real app you'd drive a\n"
-    "live QueueController — steer() and interrupt() from a UI or chat bridge — and the\n"
+    "live QueueController, steer() and interrupt() from a UI or chat bridge, and the\n"
     "harness would drain it at each safe boundary. An interrupted run is checkpointed\n"
-    "as 'interrupted' (resumable), not lost — the same durable state as a crash."
+    "as 'interrupted' (resumable), not lost: the same durable state as a crash."
 )

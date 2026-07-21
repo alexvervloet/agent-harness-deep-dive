@@ -1,16 +1,15 @@
 """
-Example 11 — parallel subagents: fan out to many workers, then join.
-====================================================================
+Example 11: parallel subagents: fan out to many workers, then join.
 
 Example 06 delegated to ONE subagent. But a coordinator often has *independent*
-work to spread out — research several topics, review several files, check several
+work to spread out: research several topics, review several files, check several
 candidates. Running those serially wastes wall-clock: the batch should cost the
 SLOWEST worker, not the SUM.
 
 `fan_out` (harness/orchestrate.py) is the coordinator's map step: hand it a list of
 (subagent, task) workers and it runs them concurrently, each in its own harness
-with its own context window, returning every result. The reduce — aggregating the
-answers — is up to you.
+with its own context window, returning every result. The reduce, aggregating the
+answers, is up to you.
 
 We give three research workers a slow lookup tool (a stand-in for real model/tool
 latency) and run the same batch two ways, timed: serial vs concurrent. The
@@ -36,7 +35,7 @@ load_dotenv()
 ensure_ready()
 print(f"Provider: {describe()}\n")
 
-WORKER_LATENCY = 0.4  # seconds — a stand-in for a real worker's model + tool time
+WORKER_LATENCY = 0.4  # seconds; a stand-in for a real worker's model + tool time
 
 
 def slow_lookup(args: dict, sandbox) -> str:
@@ -79,13 +78,13 @@ for r in concurrent:
     print(f"    • {r.task}  ->  {r.answer}")
 
 print(f"\n  serial:     {serial_s:.2f}s  (sum of all {len(workers)} workers)")
-print(f"  concurrent: {conc_s:.2f}s  (about one worker — the slowest)")
+print(f"  concurrent: {conc_s:.2f}s  (about one worker, the slowest)")
 print(f"  speedup:    {serial_s / conc_s:.1f}x")
 
 print(
     "\nThat's fan-out/join orchestration: independent work spread across workers, each\n"
     "with its own isolated context, joined back by the coordinator. Concurrency turns\n"
-    "the batch cost from the SUM into the MAX — the same win as parallel tool calls in\n"
+    "the batch cost from the SUM into the MAX: the same win as parallel tool calls in\n"
     "the Agents dive, one level up at the agent. Keep parallel workers independent and\n"
     "read-mostly (they share the sandbox); for dependent steps, delegate serially\n"
     "(example 06). Real systems do this with LangGraph parallel branches or a Managed\n"

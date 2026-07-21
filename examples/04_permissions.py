@@ -1,18 +1,17 @@
 """
-Example 04 — permission policies: allow / ask / deny, lifted out of the loop.
-=============================================================================
+Example 04: permission policies: allow / ask / deny, lifted out of the loop.
 
 The Agents dive gated dangerous tools with an `approve` callback threaded through
 the loop. A harness makes the *policy* a declarative object you read, diff, and
-version on its own — separate from the loop code. Three verdicts:
+version on its own, separate from the loop code. Three verdicts:
 
-  allow — run it (read-only, cheap, reversible)
-  ask   — pause and ask a human before running (writes, spends, sends)
-  deny  — never run it (out of bounds for this agent)
+  allow  run it (read-only, cheap, reversible)
+  ask    pause and ask a human before running (writes, spends, sends)
+  deny   never run it (out of bounds for this agent)
 
 Here the calculator is `allow`, `write_file` is `ask` (we auto-approve to keep the
 demo non-interactive), and `run_command` is `deny`. Watch the harness consult the
-policy on every call — and watch the agent adapt when a call is denied, because a
+policy on every call, and watch the agent adapt when a call is denied, because a
 denial comes back as just another tool result.
 
 Run it:
@@ -68,7 +67,7 @@ for task in [
 print(
     "The write was gated by an `ask` verdict (approved here, prompted in a real app);\n"
     "the shell command was refused by a `deny` verdict before it ran. The policy is a\n"
-    "plain object — you can unit-test it, diff it in review, and swap it per\n"
+    "plain object: you can unit-test it, diff it in review, and swap it per\n"
     "environment (strict in prod, loose in a sandbox) without touching agent code.\n"
     "That's exactly the shape of Claude Agent SDK permission modes and Managed Agents'\n"
     "per-tool always_allow / always_ask config."

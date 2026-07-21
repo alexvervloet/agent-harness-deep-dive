@@ -1,21 +1,19 @@
 """
-Example 10 — durable task state: a queryable log of every run.
-==============================================================
+Example 10: durable task state: a queryable log of every run.
 
 Checkpointing (example 09) is about resuming ONE run. The same persisted state
 gives you the other half of durable execution for free: a **task-state log** you
-can query. Each run carries a status through its lifecycle —
-
+can query. Each run carries a status through its lifecycle 
     queued -> running -> done            (finished with an answer)
-                      -> failed          (gave up — e.g. hit the step limit)
+                      -> failed          (gave up, e.g. hit the step limit)
                       -> running (stuck) (the process crashed mid-run)
 
-— and because every run is a file on disk, you can list them all: which finished,
+and because every run is a file on disk, you can list them all: which finished,
 which are still going, and which crashed and need resuming. That's exactly what a
 job queue, a cron dashboard, or Managed Agents' deployment-run records give you.
 
-We run three jobs — one completes, one is capped so it fails, one 'crashes'
-mid-run — then print the durable log, and resume the crashed one from that log.
+We run three jobs (one completes, one is capped so it fails, one 'crashes'
+mid-run) then print the durable log, and resume the crashed one from that log.
 
 Offline and deterministic. Run:
 
@@ -83,7 +81,7 @@ print(f"  {'-' * 12} {'-' * 9} {'-' * 5}  {'-' * 30}")
 for r in cp.records():
     print(f"  {r.run_id:<12} {r.status:<9} {r.steps:>5}  {r.answer[:40]}")
 
-# Find the crashed run and resume it — no need to know anything but its id.
+# Find the crashed run and resume it: no need to know anything but its id.
 stuck = [r for r in cp.records() if r.status == RUNNING]
 print(
     f"\n{len(stuck)} run(s) are stuck in 'running' (a crashed process). Resuming them:\n"
@@ -104,5 +102,5 @@ print(
     "them here. 'done' is finished, 'failed' gave up and needs a fix or a bigger step\n"
     "budget, and a run stuck in 'running' is a crashed process to resume. That status\n"
     "column is the difference between an agent you hope finished and one you can prove\n"
-    "did — the durable task state production agent systems are built on."
+    "did: the durable task state production agent systems are built on."
 )

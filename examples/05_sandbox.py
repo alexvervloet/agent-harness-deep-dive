@@ -1,6 +1,5 @@
 """
-Example 05 — the sandbox: the boundary tools execute inside.
-============================================================
+Example 05: the sandbox: the boundary tools execute inside.
 
 The model chose the arguments, and the model is acting on text that might be
 attacker-controlled (the Prompt Injection dive's whole warning). So tool execution
@@ -9,9 +8,9 @@ loop didn't.
 
 Two boundaries here, both reject-by-default:
 
-  path jail        — every file path is resolved and must stay under the workspace
+  path jail         every file path is resolved and must stay under the workspace
                      root. `../../etc/passwd` resolves outside → refused.
-  command allowlist — only named executables run. `echo` is allowed; `curl` isn't.
+  command allowlist only named executables run. `echo` is allowed; `curl` isn't.
 
 We let the agent read a legit file, then try a directory-traversal escape, then try
 an allowlisted command and a non-allowlisted one.
@@ -58,10 +57,10 @@ for task in [
 
 print(
     "The legit read and the allowlisted `echo` ran; the path-traversal escape and the\n"
-    "non-allowlisted `curl` were refused at the boundary — as tool RESULTS, so the\n"
+    "non-allowlisted `curl` were refused at the boundary, as tool RESULTS, so the\n"
     "agent sees the refusal and adapts rather than crashing. Note the jail checks the\n"
     "*resolved* path, not the raw string, so `..` and symlink tricks can't sneak out.\n"
     "Real harnesses sandbox far harder (containers, seccomp, egress rules, a hosted\n"
-    "per-session workspace) — but it's this same contract: the model proposes, the\n"
+    "per-session workspace) but it's this same contract: the model proposes, the\n"
     "sandbox disposes."
 )

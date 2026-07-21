@@ -1,10 +1,9 @@
 """
-Example 02 — the same task, but the harness runs the loop and emits events.
-===========================================================================
+Example 02: the same task, but the harness runs the loop and emits events.
 
 Example 01 wrote the loop. Here we hand the same task to a `Harness` and stop
 writing loops: we configure it, then *consume its event stream*. The loop is gone
-from your code — it's inside `Harness.run()`, which yields one typed event per
+from your code. It's inside `Harness.run()`, which yields one typed event per
 thing that happens (see harness/events.py). That inversion is the point of a
 harness: every event is a place to observe, react, or record.
 
@@ -43,7 +42,7 @@ for event in agent.run("What is (23 * 47) + 100?"):
 print(f"\nFinal answer: {answer}")
 print(
     "\nYou never wrote a loop. You iterated an event stream, and the harness handled\n"
-    "the mechanics. Same result as example 01 — but now there are seams: the next\n"
+    "the mechanics. Same result as example 01, but now there are seams: the next\n"
     "three examples slot hooks, a permission policy, and a sandbox into those seams\n"
     "without touching the loop at all."
 )
