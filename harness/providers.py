@@ -37,7 +37,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any
 
-_OPENAI_CHAT = "gpt-4o-mini"
+_OPENAI_CHAT = "gpt-5.4-nano"
 _CLAUDE_CHAT = "claude-haiku-4-5"
 _MOCK_MODEL = "mock-1"
 
