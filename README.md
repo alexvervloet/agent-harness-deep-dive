@@ -368,6 +368,40 @@ exists to give you.
 
 ---
 
+## 16. Agent Skills: instructions that load on demand
+
+```bash
+python examples/15_skills.py               # explain + list skills, free
+secrun python examples/15_skills.py --real # actually builds a spreadsheet
+```
+
+A capable agent needs more instructions than fit comfortably in one system
+prompt, and stuffing them all in makes every request slower, dearer, and (per
+the [Context Engineering dive](https://github.com/alexvervloet/context-engineering-deep-dive))
+measurably worse. A **skill** is the instruction-set answer: a folder with a
+`SKILL.md`, whose one-line description sits in context always while the body is
+read only when the task calls for it.
+
+| Mechanism | What stays in context |
+|-----------|-----------------------|
+| system prompt | all of it, every request, forever |
+| **skill** | one line; the rest loads on demand |
+| subagent (§7) | nothing; it gets its own window |
+
+Three things must travel together or the request fails: the two betas
+(`code-execution-2025-08-25`, `skills-2025-10-02`), a `container` naming the
+skills, and the `code_execution` tool, because skills execute in the container.
+Anthropic ships `xlsx`, `pptx`, `docx` and `pdf`; you can register your own.
+
+The reason this sits in a *harness* dive rather than an API one: a skill is
+configuration your harness owns, exactly like §5's permission policy or §4's
+tool surface. Which skills to attach, and whether the model may reach for one
+unprompted, are your decisions. And since a skill can carry scripts, and those
+scripts run, a skill you did not write deserves the same suspicion as a tool you
+did not write.
+
+---
+
 ## The capstone: `agent_harness.py`
 
 Everything assembled into a harness you can drive: a real permission policy
@@ -511,6 +545,7 @@ examples/
   12_steering.py            ← inject / interrupt a running agent mid-run (offline)
   13_orchestration_graph.py ← routing, branching, and cycles as a graph (offline)
   14_managed_agents.py     ← the hosted end of the axis: Anthropic runs the harness
+  15_skills.py             ← progressive-disclosure instructions (SKILL.md)
 ```
 
 (`workspace/` and `runs/` are created by the examples and are git-ignored.)
