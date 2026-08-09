@@ -323,6 +323,51 @@ loop only when the path genuinely can't be known up front.
 
 ---
 
+## 15. Managed Agents: when you own none of it
+
+```bash
+python examples/14_managed_agents.py               # explain only, free
+secrun python examples/14_managed_agents.py --real # provisions, then cleans up
+```
+
+Sections 3 through 14 built a harness. Managed Agents is Anthropic running that
+whole layer: you do not write the loop, host the container, or persist the run.
+It is the far end of the axis this dive walks.
+
+```
+your own loop  ->  your own harness  ->  a harness you host  ->  hosted entirely
+     (§2)              (§3-14)           (Claude Agent SDK)     (Managed Agents)
+```
+
+Almost nothing in it is a new idea. It is this dive's problem list with someone
+else's answers plugged in:
+
+| This dive | Managed Agents |
+|-----------|----------------|
+| your event stream (§3) | `sessions.events.stream()` |
+| permission policies (§5) | `always_allow` / `always_ask` per tool |
+| the sandbox (§6) | the session's container, Anthropic-run |
+| subagents (§7) | a `multiagent` roster on the agent |
+| checkpoint/resume (§10) | the session, durable by construction |
+| run records (§11) | deployment runs |
+| steering (§13) | `user.message` / `user.interrupt` events |
+
+The one structural rule worth memorizing: an **Agent** is a persisted, versioned
+config (model, system, tools) and a **Session** is one run of it. Those fields
+live on the agent, never the session. Creating an agent per run is the classic
+mistake: it orphans objects, pays creation latency every time, and discards the
+versioning that is the reason agents are separate objects at all. Create once,
+store the id, reuse. That is the hosted version of not re-instantiating your
+harness inside the request handler.
+
+What you give up is real. You cannot reach into the loop the way §4's hooks let
+you, tools run in a container you do not own, and it is one vendor. Good trade
+when the alternative is maintaining §3 through §14 yourself. Bad trade when that
+layer is where your value lives, which is precisely the judgement this dive
+exists to give you.
+
+---
+
 ## The capstone: `agent_harness.py`
 
 Everything assembled into a harness you can drive: a real permission policy
@@ -465,6 +510,7 @@ examples/
   11_parallel_subagents.py  ← fan out to many workers concurrently, then join (offline)
   12_steering.py            ← inject / interrupt a running agent mid-run (offline)
   13_orchestration_graph.py ← routing, branching, and cycles as a graph (offline)
+  14_managed_agents.py     ← the hosted end of the axis: Anthropic runs the harness
 ```
 
 (`workspace/` and `runs/` are created by the examples and are git-ignored.)
