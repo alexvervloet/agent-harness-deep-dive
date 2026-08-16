@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import ast
 import operator
+import re
 import subprocess
 from dataclasses import dataclass
 from typing import Callable
@@ -92,8 +93,6 @@ _NOTES = {
 def _words(text: str) -> set[str]:
     """Lowercase alphanumeric words, so 'plans,' and 'Plans:' both match 'plans'
     (punctuation stuck to a word must not defeat the lookup)."""
-    import re
-
     return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) > 2}
 
 
