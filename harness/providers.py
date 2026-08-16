@@ -137,8 +137,6 @@ def describe() -> str:
 
 
 def ensure_ready() -> None:
-    import sys
-
     p = provider_name()
     if p not in _KEYS:
         sys.exit(
