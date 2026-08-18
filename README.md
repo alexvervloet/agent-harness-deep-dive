@@ -592,12 +592,15 @@ capstone. Do them in any order; this sequence builds naturally:
 
 - [Agent Harnesses](https://github.com/alexvervloet/agent-harness-deep-dive): build on the loop: hooks, permissions, sandboxing, subagents, headless
 - [Context Engineering](https://github.com/alexvervloet/context-engineering-deep-dive): manage what's in the window
+- [AI Data Engineering](https://github.com/alexvervloet/ai-data-engineering-deep-dive): the corpus behind the index: versions, lineage, ACLs, deletes
 - [Multimodal](https://github.com/alexvervloet/multimodal-deep-dive): images & audio, not just text
 - [Realtime Voice](https://github.com/alexvervloet/realtime-voice-deep-dive): low-latency speech-to-speech agents
 - [Fine-tuning](https://github.com/alexvervloet/fine-tuning-deep-dive): teach a model new behavior by example
 - [MCP](https://github.com/alexvervloet/mcp-deep-dive): serve tools, data & prompts over a standard protocol
 - [Local Models](https://github.com/alexvervloet/local-models-deep-dive): run open-weight models on your own machine
 - [Observability](https://github.com/alexvervloet/observability-deep-dive): watch a running app over time: drift, quality, alerting, the flywheel
+- [Architecture](https://github.com/alexvervloet/architecture-deep-dive): the seams between the components, each decision measured rather than asserted
+- [Professional Tools](https://github.com/alexvervloet/professional-tools-deep-dive): rebuild each from-scratch primitive with the tool professionals reach for, and measure both
 
 **Agent Harnesses is a bonus dive.** It slots directly after
 [Agents](https://github.com/alexvervloet/agents-deep-dive) (#6), since that dive builds the
