@@ -86,7 +86,7 @@ def explain() -> None:
 
 def run_for_real() -> None:
     if not os.getenv("ANTHROPIC_API_KEY"):
-        sys.exit("--real needs ANTHROPIC_API_KEY (see ../SECRETS.md, run under secrun).")
+        sys.exit("--real needs ANTHROPIC_API_KEY (see ../docs/SECRETS.md, run under secrun).")
 
     import anthropic
 

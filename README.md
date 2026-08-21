@@ -63,7 +63,7 @@ pip install -r requirements.txt
 # 3. Copy the env file: the default runs keyless (no API key needed)
 cp .env.example .env
 #    (Real provider instead of the mock? Its key goes in your OS keychain,
-#     not .env: see ../SECRETS.md, then run scripts as `secrun python ...`.)
+#     not .env: see ../docs/SECRETS.md, then run scripts as `secrun python ...`.)
 
 # 4. Confirm everything is wired up (makes no API call, costs nothing)
 python check_setup.py
@@ -559,7 +559,7 @@ Run `python check_setup.py` first; it catches most problems. Then, by symptom:
 | What you see | What it means / the fix |
 |--------------|-------------------------|
 | `ModuleNotFoundError` (dotenv / rich) | Deps aren't installed or the venv isn't active. `source .venv/bin/activate` then `pip install -r requirements.txt`. |
-| `PROVIDER=... needs ... in the environment` | You switched to a real provider without a key. Load it from your keychain with `secrun` (see [SECRETS.md](../SECRETS.md)), or go back to `PROVIDER=mock`. |
+| `PROVIDER=... needs ... in the environment` | You switched to a real provider without a key. Load it from your keychain with `secrun` (see [SECRETS.md](../docs/SECRETS.md)), or go back to `PROVIDER=mock`. |
 | A tool ran that I expected to be blocked | Check the policy verdict *and* your hooks. `deny` blocks outright; `ask` runs if your `approve` callback returns True (the capstone's `--yes` auto-approves `ask`, but never overrides `deny`). |
 | "escapes the sandbox" on a path I meant | Working as intended: the jail resolves `..` and symlinks and refuses anything outside the root. Use a relative path inside `workspace/`. |
 | The mock takes one step where I expected several | The deterministic planner does one tool per turn for clarity; a real model may chain more. Switch `PROVIDER` to see it. |

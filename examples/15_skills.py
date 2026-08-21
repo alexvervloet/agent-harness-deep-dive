@@ -64,7 +64,7 @@ def main() -> None:
     print(__doc__.strip())
 
     if not os.getenv("ANTHROPIC_API_KEY"):
-        print("\n(no ANTHROPIC_API_KEY, so stopping here. See ../SECRETS.md.)")
+        print("\n(no ANTHROPIC_API_KEY, so stopping here. See ../docs/SECRETS.md.)")
         return
 
     import anthropic
