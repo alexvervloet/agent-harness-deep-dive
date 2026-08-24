@@ -13,7 +13,7 @@ and a harness-style step loop. It exists to show the *shape*; the real thing swa
 the scripted planner for a vision model and the mock screen for a real desktop or
 browser.
 
-Where a harness earns its keep here: the screen and the mouse live *somewhere*, and
+Where a harness pays for itself here: the screen and the mouse live *somewhere*, and
 you do not want that somewhere to be your laptop for an untrusted agent. Providers
 offer a **hosted sandbox**, a throwaway VM/browser they run, so the computer-use
 loop drives an isolated machine, not yours. That's the sandbox idea from example 05,
