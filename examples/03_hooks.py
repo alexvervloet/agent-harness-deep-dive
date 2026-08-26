@@ -11,7 +11,7 @@ kinds here:
 
 Hooks are how a harness lets you enforce policy that the loop knows nothing about.
 Here: a pre-tool hook blocks reads of anything that looks like a credentials file,
-and a post-tool hook redacts an API key that slips through in a file's contents 
+and a post-tool hook redacts an API key that slips through in a file's contents,
 so the model (and your logs) never see the raw secret.
 
 Run it:
