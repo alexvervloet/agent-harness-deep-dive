@@ -3,7 +3,7 @@ Example 10: durable task state: a queryable log of every run.
 
 Checkpointing (example 09) is about resuming ONE run. The same persisted state
 gives you the other half of durable execution for free: a **task-state log** you
-can query. Each run carries a status through its lifecycle 
+can query. Each run carries a status through its lifecycle:
     queued -> running -> done            (finished with an answer)
                       -> failed          (gave up, e.g. hit the step limit)
                       -> running (stuck) (the process crashed mid-run)
