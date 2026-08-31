@@ -1,9 +1,9 @@
 # The default stack is a deterministic, offline MOCK provider: it needs only
 # python-dotenv. You can run the ENTIRE repo with no key and no cost.
-python-dotenv>=1.0.0
+python-dotenv>=1.0.0,<2
 
 # rich renders the event stream and the capstone's output.
-rich>=13.0.0
+rich>=13.0.0,<16
 
 # --- Provider SDKs (optional) ---
 # Only needed if you switch PROVIDER off "mock" to run the harness against a real
