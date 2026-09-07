@@ -237,6 +237,16 @@ counter proving each tool runs exactly once across both. Real systems do the sam
 database instead of a JSON file: LangGraph checkpointers, Temporal-style durable workflows,
 Managed Agents' server-side sessions.
 
+Read the counter for exactly what it claims. The crash here lands *between* steps, after
+the tool returned and its result was written down, which is the case checkpointing solves
+completely. The case it does not solve is a crash *inside* the call, where the request
+reached the outside world and the response never came back. The checkpoint has no record,
+so resuming runs the tool again, and whether that is harmless or a second charge on a
+customer's card depends on the tool, not on the harness. This is why the boring advice is
+the load-bearing one: give every tool with an external effect an idempotency key, and make
+the retry safe at the thing being retried. No amount of durability upstream can fix an
+effect that isn't repeatable.
+
 ---
 
 ## 11. Durable task state, a queryable run log
@@ -458,9 +468,14 @@ You've built a harness from scratch. What comes next is the same pieces, harder.
 - **Richer permission policies.** Per-argument rules (allow `read_file` anywhere
   but `write_file` only under `/tmp`), rate limits, and budgets per run.
 - **Harder durable execution.** §10 and §11 checkpoint to a JSON file and resume. Next
-  comes a DB-backed durable-workflow engine with idempotent, exactly-once replay even
-  across a mid-tool crash, plus reconnecting a dropped event stream without losing
-  events.
+  comes a DB-backed durable-workflow engine, plus reconnecting a dropped event stream
+  without losing events. Note what that does and does not buy you: engines like Temporal
+  make the *workflow* durable and replayable, while the activities inside it still run
+  at-least-once. Nothing at the engine layer can make an external effect happen exactly
+  once. If the process dies after `charge_card` succeeded but before its result reached
+  the checkpoint, resuming replays the call, and only an idempotency key the payment
+  provider honors stops the second charge. Exactly-once effects are something you build
+  at the effect, not something a workflow engine hands you.
 - **Deeper orchestration.** §12 through §14 fan out to parallel workers, steer a run
   mid-flight, and route with a graph. Next comes hierarchical multi-level delegation,
   agent-to-agent messaging, backpressure and concurrency limits across many workers, and
@@ -487,7 +502,7 @@ replaces:
 | Subagents share one process; `fan_out` uses a thread pool | **Isolated workers** with their own resource limits, backpressure/concurrency caps, and a coordinator that survives a crash |
 | Steering is an in-process controller; the graph is plain Python | A **durable message queue** (steer/interrupt across processes) and a **graph engine** with persistence, streaming, and observability baked in |
 | Events are printed | A **structured trace** (a span per step) shipped to observability, plus durable run records |
-| Checkpoint is a JSON file per run | A **durable-execution engine**: DB- or workflow-backed state, idempotent exactly-once replay even across a mid-tool crash (Temporal-style), or a provider's server-side sessions |
+| Checkpoint is a JSON file per run | A **durable-execution engine**: DB- or workflow-backed state that survives a mid-tool crash (Temporal-style), or a provider's server-side sessions, with **idempotency keys on every tool that touches the outside world**, because the engine replays at-least-once |
 | The mock (or one model) is hard-wired | A **model router** with fallbacks, retries, and cost/latency budgets per run |
 | Headless run is a script | A **queue/worker** with retries, idempotency, and a webhook or eval gate on the result |
 
