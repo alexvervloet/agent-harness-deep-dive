@@ -1,6 +1,6 @@
 # Agent Harnesses: A Guided Deep Dive
 
-A hands-on playground for the part of agent work the Agents dive left off. Once you have
+A hands-on playground for the part of agent work the Agents dive left off. Once you've
 hand-written the loop, most real agent engineering happens on a harness, the layer that
 runs the loop for you and adds subagents, hooks, permission policies, sandboxed tool
 execution, headless automation, durable checkpointed and resumable runs, and orchestration
@@ -10,7 +10,7 @@ loop you already know. No framework magic, just enough code to see what a harnes
 you, and to answer the interview question: "you have a working agent loop, so when do you
 throw it away for the SDK, and what does the SDK actually give you?"
 
-Here is what makes this repo work. It runs completely offline on a mock provider, with no
+Here's what makes this repo work. It runs completely offline on a mock provider, with no
 API key. Hooks, policies, sandboxing, subagents, and event streams are all
 provider-neutral, so a deterministic rule-based "model" is all you need to see every one of
 them work. Flip one env var and the same harness drives a real OpenAI or Claude model.
@@ -36,7 +36,7 @@ predict-then-run prompt for each one.
 > policies, the sandbox, durable checkpoints, and orchestration live. In 2026, most agent
 > work happens on a harness rather than in a hand-rolled loop.**
 
-That is the whole repo. The Agents dive proved the loop is about 20 lines. But a production
+That's the whole repo. The Agents dive proved the loop is about 20 lines. But a production
 loop needs a place to gate a dangerous call, a place to redact a secret, a boundary on
 where tools act, a way to delegate, structured output you can log and test, and a way to
 survive a crash mid-run. Bolt all of that into a bare `while` loop and it stops being
@@ -91,8 +91,8 @@ hooks, policy, sandbox, and subagents, is provider-neutral.
 python examples/01_bare_loop_recap.py        # offline
 ```
 
-Here is the Agents-dive loop again, in about 15 lines, driving the mock. It works, and
-that's the point. It works and it is naked. There is no structured way to observe it beyond
+Here's the Agents-dive loop again, in about 15 lines, driving the mock. It works, and
+that's the point. It works and it's naked. There's no structured way to observe it beyond
 `print`, nowhere to gate a `write_file`, nowhere to block a call or redact a result, no
 boundary on where a tool acts, and no way to delegate. The example runs the loop, then
 names those five gaps. The rest of the dive fills them.
@@ -155,14 +155,14 @@ python examples/05_sandbox.py
 ```
 
 The model chose the arguments, and it may be acting on attacker-controlled text. So tool
-execution needs a boundary the model cannot argue past,
+execution needs a boundary the model can't argue past,
 [harness/sandbox.py](harness/sandbox.py). Two reject-by-default boundaries. A path jail
 resolves every file path and requires it to stay under the workspace root, so
 `../../etc/passwd` is refused. A command allowlist runs only named executables. The example
 reads a legitimate file, then watches a directory-traversal escape and a non-allowlisted
 command get refused as tool results, so the agent adapts. Real harnesses sandbox far harder
-with containers, seccomp, egress rules, and a provider-hosted per-session workspace, and it
-is the same contract. The model proposes, the sandbox disposes.
+with containers, seccomp, egress rules, and a provider-hosted per-session workspace, and it's
+the same contract. The model proposes, the sandbox disposes.
 
 ---
 
@@ -179,7 +179,7 @@ context window holding only that subagent's tools, runs it, and returns the fina
 What you get is context isolation. The orchestrator's window never fills with the
 subagent's intermediate steps. The example has an arithmetic-only orchestrator delegate a
 lookup to a `research` subagent that owns the knowledge-base tool, and the nested run
-appears indented in the stream. Scale this up and it is how large agent systems get
+appears indented in the stream. Scale this up and it's how large agent systems get
 built.
 
 ---
@@ -195,7 +195,7 @@ The other way to run an agent, the one job descriptions call agentic automation,
 headless. No human, kicked off by cron or CI, emitting structured output another program
 consumes. Because everything is events, you fold a run into a machine-readable record as it
 happens. The example runs a task with no interaction and prints a JSON summary, the shape
-you would write to a log, post to a webhook, or assert on in CI, failing the build if a
+you'd write to a log, post to a webhook, or assert on in CI, failing the build if a
 `blocked` tool shows up.
 
 ---
@@ -239,9 +239,9 @@ Managed Agents' server-side sessions.
 
 Read the counter for exactly what it claims. The crash here lands *between* steps, after
 the tool returned and its result was written down, which is the case checkpointing solves
-completely. The case it does not solve is a crash *inside* the call, where the request
+completely. The case it doesn't solve is a crash *inside* the call, where the request
 reached the outside world and the response never came back. The checkpoint has no record,
-so resuming runs the tool again, and whether that is harmless or a second charge on a
+so resuming runs the tool again, and whether that's harmless or a second charge on a
 customer's card depends on the tool, not on the harness. This is why the boring advice is
 the load-bearing one: give every tool with an external effect an idempotency key, and make
 the retry safe at the thing being retried. No amount of durability upstream can fix an
@@ -259,7 +259,7 @@ The same persisted state gives you the other half for free, a task-state log you
 Each run carries a status through its lifecycle: `queued`, then `running`, then `done`. Or
 `failed`, meaning it gave up. Or stuck in `running`, meaning it crashed mid-run. Because
 every run is a file on disk, you can list them all and see which finished, which are still
-going, and which crashed and need resuming. That is exactly what a job queue, a cron
+going, and which crashed and need resuming. That's exactly what a job queue, a cron
 dashboard, or Managed Agents' deployment-run records give you. The example runs three jobs,
 one that completes, one capped so it fails, and one that crashes, prints the durable log,
 and resumes the crashed one straight from it. That status column is the difference between
@@ -294,7 +294,7 @@ python examples/12_steering.py        # offline
 ```
 
 The permission policy in §5 gates a tool before it runs. Steering is the other half of
-operator control, acting on a run while it is in flight. The harness polls a controller,
+operator control, acting on a run while it's in flight. The harness polls a controller,
 [harness/steer.py](harness/steer.py), at each step boundary, so you can inject a message
 that changes the next step ("actually, only Pro") without restarting, queue follow-ups
 processed in order, and interrupt, stopping the run at a safe boundary instead of killing
@@ -319,10 +319,10 @@ choose it, which means a graph of nodes wired by conditional edges,
 billing ticket and a technical ticket visit different nodes. A `review` gate loops back
 through `revise` until the draft passes, which is a cycle. Then it routes to `send`. A node
 is `state -> state`, so it can run plain code or a whole Harness. The graph owns the control
-flow, not what is inside a node. This is the workflow-against-agent call from the Agents
-dive made concrete, and it is the model behind LangGraph. If you can draw the flowchart,
-build a graph, because it is cheaper, predictable, and testable. Reach for the model-driven
-loop only when the path genuinely cannot be known up front.
+flow, not what's inside a node. This is the workflow-against-agent call from the Agents
+dive made concrete, and it's the model behind LangGraph. If you can draw the flowchart,
+build a graph, because it's cheaper, predictable, and testable. Reach for the model-driven
+loop only when the path genuinely can't be known up front.
 
 ---
 
@@ -334,7 +334,7 @@ secrun python examples/14_managed_agents.py --real # provisions, then cleans up
 ```
 
 Sections 3 through 14 built a harness. Managed Agents is Anthropic running that whole
-layer. You do not write the loop, host the container, or persist the run. It is the far end
+layer. You don't write the loop, host the container, or persist the run. It's the far end
 of the axis this dive walks.
 
 ```
@@ -342,7 +342,7 @@ your own loop  ->  your own harness  ->  a harness you host  ->  hosted entirely
      (§2)              (§3-14)           (Claude Agent SDK)     (Managed Agents)
 ```
 
-Almost nothing in it is a new idea. It is this dive's problem list with someone else's
+Almost nothing in it is a new idea. It's this dive's problem list with someone else's
 answers plugged in.
 
 | This dive | Managed Agents |
@@ -359,11 +359,11 @@ One structural rule is worth memorizing. An Agent is a persisted, versioned conf
 the model, system prompt, and tools. A Session is one run of it. Those fields live on the
 agent, never on the session. Creating an agent per run is the classic mistake. It orphans
 objects, pays creation latency every time, and discards the versioning that is the whole
-reason agents are separate objects. Create once, store the id, reuse. That is the hosted
+reason agents are separate objects. Create once, store the id, reuse. That's the hosted
 version of not re-instantiating your harness inside the request handler.
 
-What you give up is real. You cannot reach into the loop the way §4's hooks let you, tools
-run in a container you do not own, and it is one vendor. Good trade when the alternative is
+What you give up is real. You can't reach into the loop the way §4's hooks let you, tools
+run in a container you don't own, and it's one vendor. Good trade when the alternative is
 maintaining §3 through §14 yourself. Bad trade when that layer is where your value lives,
 which is precisely the judgement this dive exists to give you.
 
@@ -397,8 +397,8 @@ the `code_execution` tool, because skills execute in the container. Anthropic sh
 This sits in a harness dive rather than an API one because a skill is configuration your
 harness owns, exactly like §5's permission policy or §4's set of tools. Which skills to
 attach, and whether the model may reach for one unprompted, are your decisions. And since a
-skill can carry scripts, and those scripts run, a skill you did not write deserves the same
-suspicion as a tool you did not write.
+skill can carry scripts, and those scripts run, a skill you didn't write deserves the same
+suspicion as a tool you didn't write.
 
 ---
 
@@ -435,7 +435,7 @@ change. Adding a capability is one step: register it, and the harness routes to 
 
 ## When do you throw away your loop for the SDK?
 
-Here is the honest answer, and the one to give in an interview.
+Here's the honest answer, and the one to give in an interview.
 
 - **Write the loop by hand when** the agent is simple, with a few tools and one context, or
   you need to understand exactly what happens, or you're learning. The loop is about 20
@@ -443,7 +443,7 @@ Here is the honest answer, and the one to give in an interview.
 - **Adopt a harness or SDK when** you need any of the pieces this dive built: gated tools,
   hooks and guardrails, a real sandbox, subagents, structured headless output, durable
   resumable runs, or orchestration through parallel workers, mid-run steering, and graph
-  control flow. Especially when you would otherwise reimplement them badly. A harness is a
+  control flow. Especially when you'd otherwise reimplement them badly. A harness is a
   pile of hard, security-sensitive code, covering sandboxing, permission prompts, event
   plumbing, reconnection, and streaming, that someone else has already hardened.
 - **What the SDK gives you** that this toy doesn't: a real sandbox with containers rather
@@ -469,7 +469,7 @@ You've built a harness from scratch. What comes next is the same pieces, harder.
   but `write_file` only under `/tmp`), rate limits, and budgets per run.
 - **Harder durable execution.** §10 and §11 checkpoint to a JSON file and resume. Next
   comes a DB-backed durable-workflow engine, plus reconnecting a dropped event stream
-  without losing events. Note what that does and does not buy you: engines like Temporal
+  without losing events. Note what that does and doesn't buy you: engines like Temporal
   make the *workflow* durable and replayable, while the activities inside it still run
   at-least-once. Nothing at the engine layer can make an external effect happen exactly
   once. If the process dies after `charge_card` succeeded but before its result reached
