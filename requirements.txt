@@ -10,7 +10,7 @@ rich>=13.0.0,<16
 # model. Installing both lets you switch stacks with one env-var change.
 
 # OpenAI: used when PROVIDER=openai (chat + function calling).
-openai>=2.0,<3
+openai>=3.0,<4
 
 # Anthropic: used when PROVIDER=claude (messages + tool use).
-anthropic>=0.111.0,<1
+anthropic>=1.0,<2
