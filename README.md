@@ -478,9 +478,28 @@ You've built a harness from scratch. What comes next is the same pieces, harder.
   at the effect, not something a workflow engine hands you.
 - **Deeper orchestration.** §12 through §14 fan out to parallel workers, steer a run
   mid-flight, and route with a graph. Next comes hierarchical multi-level delegation,
-  agent-to-agent messaging, backpressure and concurrency limits across many workers, and
-  graph engines with persistence and streaming built in, such as LangGraph and Managed
-  Agents' multiagent coordinator.
+  backpressure and concurrency limits across many workers, and graph engines with
+  persistence and streaming built in, such as LangGraph and Managed Agents'
+  multiagent coordinator.
+- **Agents talking to agents you don't own.** Everything above coordinates workers
+  inside one system, where you wrote both ends and share a process, a queue, or a
+  database. The harder version is an agent calling one that belongs to someone else:
+  different owner, different model, no shared state, and no ability to read the other
+  side's code. That needs discovery (what can you do?), a message format, identity and
+  authorization, and a way to attribute cost. Interop protocols in this space, A2A
+  among them, are trying to standardize exactly that layer, roughly where MCP sits for
+  tools.
+
+  Worth being clear about what's settled and what isn't. MCP gave an agent a standard
+  way to reach tools and data, and it converged fast. The agent-to-agent layer hasn't,
+  and the reason is instructive: two tool calls are comparable because a tool is a
+  function with a schema, while two agents differ in autonomy, cost per call, failure
+  modes, and what they're allowed to do on your behalf. That's a harder thing to put
+  behind one interface, and it's why the security half, delegated authority in
+  particular, is the part to read first. Everything the
+  [Prompt Injection dive](https://github.com/alexvervloet/prompt-injection-deep-dive)
+  says about untrusted input applies to another agent's output, with the twist that
+  this one can be persuaded to act.
 - **Provider-hosted tools and agents.** Web search, code execution, and computer use
   run by the provider; and fully managed agents where you never run the loop.
 - **Evaluating harness behavior.** Score trajectories (right tools, right order, no
