@@ -20,13 +20,17 @@ WHAT IT LOOKS LIKE ON THE WIRE
     Skills run inside the code-execution container, so a skill request is three
     things together, and it fails if you omit any of them:
 
-        betas=["code-execution-2025-08-25", "skills-2025-10-02"]
+        betas=["code-execution-2025-08-25"]
         container={"skills": [{"type": "anthropic", "skill_id": "xlsx"}]}
         tools=[{"type": "code_execution_20260521", "name": "code_execution"}]
 
+    Skills went GA, so there is no longer a `skills-2025-10-02` beta header and
+    the namespace is `client.skills`, not `client.beta.skills`. Code execution is
+    still a beta, which is why one header survives: a request can straddle a GA
+    feature and a beta one, and you only carry headers for the beta half.
+
     Anthropic ships four: `xlsx`, `pptx`, `docx`, `pdf`. You can list them with
-    `client.beta.skills.list(betas=["skills-2025-10-02"])`, and register your own
-    against the same endpoint.
+    `client.skills.list()`, and register your own against the same endpoint.
 
 WHY THIS BELONGS IN A HARNESS DIVE
     A skill is not a model capability. It is *configuration your harness owns*,
@@ -56,8 +60,8 @@ from dotenv import load_dotenv  # noqa: E402
 load_dotenv()
 
 REAL = "--real" in sys.argv
-SKILL_BETAS = ["code-execution-2025-08-25", "skills-2025-10-02"]
-MODEL = "claude-sonnet-4-6"
+SKILL_BETAS = ["code-execution-2025-08-25"]  # Skills is GA; code execution is not
+MODEL = "claude-sonnet-5"  # same capability as 4.6 here, and $2/$10 vs $3/$15
 
 
 def main() -> None:
@@ -74,7 +78,7 @@ def main() -> None:
     # Listing skills is free, so we always do it: it proves the account has them
     # and shows the shape of the registry your harness would choose from.
     print("\n--- skills available to this account ---")
-    for skill in client.beta.skills.list(betas=["skills-2025-10-02"]).data:
+    for skill in client.skills.list().data:
         print(f"  {skill.id}")
 
     if not REAL:
@@ -130,10 +134,10 @@ def main() -> None:
     if file_ids:
         print("\nfiles the skill created:")
         for fid in file_ids:
-            meta = client.beta.files.retrieve_metadata(fid, betas=["files-api-2025-04-14"])
+            meta = client.files.retrieve_metadata(fid)  # Files API is GA too
             print(f"  {meta.filename} ({meta.size_bytes} bytes)  id={fid}")
         print(
-            "\nDownload with client.beta.files.download(file_id). The artifact is\n"
+            "\nDownload with client.files.download(file_id). The artifact is\n"
             "the point: the model did not describe a spreadsheet, it produced one."
         )
     else:

@@ -389,10 +389,16 @@ when the task calls for it.
 | **skill** | one line; the rest loads on demand |
 | subagent (§7) | nothing; it gets its own window |
 
-Three things have to travel together or the request fails: the two betas
-(`code-execution-2025-08-25`, `skills-2025-10-02`), a `container` naming the skills, and
-the `code_execution` tool, because skills execute in the container. Anthropic ships `xlsx`,
-`pptx`, `docx`, and `pdf`, and you can register your own.
+Three things have to travel together or the request fails: the `code-execution-2025-08-25`
+beta, a `container` naming the skills, and the `code_execution` tool, because skills
+execute in the container. Anthropic ships `xlsx`, `pptx`, `docx`, and `pdf`, and you can
+register your own.
+
+Skills itself went GA, so the `skills-2025-10-02` header it used to need is gone and the
+namespace is `client.skills` rather than `client.beta.skills`. Worth noticing that one
+half of this request graduated and the other didn't: a request straddling a GA feature
+and a beta one carries headers for the beta half only, and "it's beta" is a property of
+each feature rather than of the call.
 
 This sits in a harness dive rather than an API one because a skill is configuration your
 harness owns, exactly like §5's permission policy or §4's set of tools. Which skills to
