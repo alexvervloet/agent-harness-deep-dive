@@ -37,7 +37,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any
 
-_OPENAI_CHAT = "gpt-5.4-nano"
+_OPENAI_CHAT = "gpt-6-luna"
 _CLAUDE_CHAT = "claude-haiku-4-5"
 _MOCK_MODEL = "mock-1"
 
@@ -424,6 +424,9 @@ def run_turn(system: str, transcript: Transcript, tools: list) -> Turn:
             model=_OPENAI_CHAT,
             messages=_openai_messages(system, transcript),  # type: ignore[arg-type]
             tools=schema or None,  # type: ignore[arg-type]
+            # gpt-6-luna reasons by default, and on chat completions it rejects
+            # function tools unless reasoning is off. "none" turns it off.
+            reasoning_effort="none",
         )
         msg = resp.choices[0].message
         calls = []
