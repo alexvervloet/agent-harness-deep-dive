@@ -103,7 +103,7 @@ def main() -> None:
                 "content": (
                     "Build a small spreadsheet named costs.xlsx with columns "
                     "Model, InputPerMTok, OutputPerMTok and three rows: "
-                    "gpt-5.4-nano 0.20 1.25; claude-haiku-4-5 1.00 5.00; "
+                    "gpt-6-luna 0.10 0.50; claude-haiku-4-5 1.00 5.00; "
                     "claude-opus-5 5.00 25.00. Then tell me you are done."
                 ),
             }
