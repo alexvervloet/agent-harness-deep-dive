@@ -591,7 +591,7 @@ Run `python check_setup.py` first; it catches most problems. Then, by symptom:
 | A tool ran that I expected to be blocked | Check the policy verdict *and* your hooks. `deny` blocks outright; `ask` runs if your `approve` callback returns True (the capstone's `--yes` auto-approves `ask`, but never overrides `deny`). |
 | "escapes the sandbox" on a path I meant | Working as intended: the jail resolves `..` and symlinks and refuses anything outside the root. Use a relative path inside `workspace/`. |
 | The mock takes one step where I expected several | The deterministic planner does one tool per turn for clarity; a real model may chain more. Switch `PROVIDER` to see it. |
-| `SyntaxError` / odd type errors on startup | You're likely on Python 3.9 or older; this repo needs 3.10+. `check_setup.py` confirms your version. |
+| `SyntaxError` / odd type errors on startup | You're likely on Python 3.10 or older; this repo needs 3.11+. `check_setup.py` confirms your version. |
 
 Still stuck? Every file is small and self-contained. Open it, read the docstring
 at the top, and run it directly. [harness/core.py](harness/core.py) is the whole
