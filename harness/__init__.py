@@ -8,6 +8,7 @@ and adds the things production agent work is actually made of:
   tools.py      what a tool is + a sandboxed toolbox
   sandbox.py    the boundary tools execute inside (path jail + command allowlist)
   policy.py     a declarative allow/ask/deny permission policy
+  review.py     a reviewer that answers the ask prompts, and hands back to a person
   events.py     the typed event stream the harness emits
   checkpoint.py durable run state: persist the transcript, resume after a crash
   steer.py      steering controllers: inject / queue / interrupt a running run
@@ -42,6 +43,7 @@ from .events import (
     ToolFinished,
 )
 from .policy import ALLOW, ASK, DENY, PermissionPolicy, always_allow
+from .review import ClassifierApprover, model_review, rule_review
 from .steer import QueueController, ScriptedController, SteerController, SteerSignal
 from .providers import Message, ToolCall, Transcript, Turn, describe, ensure_ready, provider_name, run_turn
 from .sandbox import Sandbox, SandboxError
@@ -89,6 +91,9 @@ __all__ = [
     "SteerSignal",
     "PermissionPolicy",
     "always_allow",
+    "ClassifierApprover",
+    "rule_review",
+    "model_review",
     "ALLOW",
     "ASK",
     "DENY",
