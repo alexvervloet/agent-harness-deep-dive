@@ -247,6 +247,17 @@ the load-bearing one: give every tool with an external effect an idempotency key
 the retry safe at the thing being retried. No amount of durability upstream can fix an
 effect that isn't repeatable.
 
+On the newest Claude models a checkpoint has one more job: replay exactly what was sent.
+Claude Fable 5.1, Opus 5.5, and Sonnet 5.5 sign each thinking block with everything before
+it, so a resume that rebuilds the request from templates, re-renders the system prompt, or
+reorders the tools invalidates every block, and accounts created since 2026-08-31 get a
+400 for it. The Context Engineering dive's example 11 shows the check live. This harness
+sidesteps it the blunt way: its transcript keeps text and tool calls but not thinking
+blocks, so there's nothing to fail the check, and also nothing of the model's earlier
+reasoning survives a resume. Fine on Haiku 4.5, which is what it runs. A harness for those
+newer models would store the provider's content blocks as returned, keep `system` and
+`tools` frozen for the run, and append, never edit.
+
 ---
 
 ## 11. Durable task state, a queryable run log
@@ -303,6 +314,12 @@ cleanly. An interrupted run gets checkpointed as `interrupted`, which is resumab
 than lost. A real app drives the live `QueueController`, calling `steer()` and `interrupt()`
 from a UI or chat bridge. This is the from-scratch shape of Managed Agents' message queue
 plus `user.interrupt`.
+
+Notice that steering *appends* a message. That's the only safe way on the newest Claude
+models: editing the system prompt to redirect a run would invalidate the thinking already
+in it (§10). Anthropic's API has a purpose-built version, a `role: "system"` message
+appended mid-conversation, which carries system-prompt authority without touching
+anything before it.
 
 ---
 
