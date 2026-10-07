@@ -367,6 +367,35 @@ run in a container you don't own, and it's one vendor. Good trade when the alter
 maintaining §3 through §14 yourself. Bad trade when that layer is where your value lives,
 which is precisely the judgement this dive exists to give you.
 
+### The same idea from OpenAI: the Agents API
+
+OpenAI shipped its own hosted harness on 2026-09-10, the Agents API, in public beta. It
+runs OpenAI's Codex harness for you and handles sessions, orchestration, context
+compaction, and recovery. The shape is close enough that the table above mostly carries
+over: an agent (model, instructions, tools, MCP servers), an optional environment (an
+OpenAI-hosted sandbox, or one you run), a durable session, and a stream of events, with
+webhooks as the other way to hear when a turn finishes. Subagents are a `multi_agent`
+setting with a concurrency cap, and you can steer a session mid-turn or hand it the next
+task.
+
+The difference worth noticing is the structural rule above. OpenAI's quickstart passes the
+agent's model and instructions inline when it creates each session:
+
+```python
+client.beta.agents.sessions.create(
+    agent={"model": "gpt-6-astra", "instructions": "..."},
+    environment={"type": "openai_hosted"},
+    input="...",
+)
+```
+
+That's fine for a first run. The SDK also has `client.beta.agents.create(...)`, a persisted
+agent you create once and point sessions at, and for anything you deploy the same advice
+holds as for Managed Agents: create it once, keep the id, and get versioning for free. Two
+vendors, one lesson. The convenient call isn't the one you want in production. (Checked
+against openai 3.24.0 and OpenAI's docs on 2026-10-07; it's a beta, so expect the surface
+to move.)
+
 ---
 
 ## 16. Agent Skills, instructions that load on demand
