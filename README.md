@@ -146,6 +146,28 @@ pauses for a human, deny never runs. The example allows the calculator, asks bef
 a denial comes back as another tool result. This is the shape of Claude Agent SDK
 permission modes and Managed Agents' per-tool `always_allow` and `always_ask` config.
 
+### A fourth answer to `ask`: let a reviewer decide
+
+```bash
+python examples/16_model_approval.py                        # rule reviewer, offline
+PROVIDER=openai secrun python examples/16_model_approval.py # a model reviews
+```
+
+`ask` assumes a person reads each prompt. Mostly they don't. Anthropic's study of Claude
+Code's auto mode found testers caught a deliberately inserted dangerous command 13.6% of
+the time, while its classifier blocked 89%, and users approved 97% of the prompts they
+saw. [harness/review.py](harness/review.py) puts a reviewer where the person was. It's
+just an `approve` callback, so the loop doesn't change. A block goes back to the agent
+with its reason, and after 3 blocks in a row or 20 in a session the next decision goes
+to a person, whose approval hands control back. Those are Claude Code's own thresholds.
+
+The example shows two things worth more than the mechanism. Reviewers disagree: asked
+whether to save a file whose text contains `curl ... | sh`, the rule reviewer and
+`claude-haiku-4-5` blocked it and `gpt-6-luna` allowed it, since saving isn't running.
+And a reviewer only covers what you route to it. Blocked on `run_command`, the agent
+tried `read_file` on the same `~/.ssh` path, a tool the policy allows, and only §6's
+sandbox stopped it.
+
 ---
 
 ## 6. The sandbox, the boundary tools execute inside
@@ -596,6 +618,7 @@ harness/                    ← the from-scratch harness library (read it!)
   tools.py                  ← what a tool is + a sandboxed toolbox
   sandbox.py                ← the boundary tools run inside (path jail + command allowlist)
   policy.py                 ← declarative allow / ask / deny permission policy
+  review.py                 ← a reviewer that answers ask prompts, then hands back to a person
   events.py                 ← the typed event stream the harness emits
   checkpoint.py             ← durable run state: persist the transcript, resume after a crash
   steer.py                  ← steering controllers: inject / queue / interrupt a running run
@@ -620,6 +643,7 @@ examples/
   13_orchestration_graph.py ← routing, branching, and cycles as a graph (offline)
   14_managed_agents.py     ← the hosted end of the axis: Anthropic runs the harness
   15_skills.py             ← progressive-disclosure instructions (SKILL.md)
+  16_model_approval.py     ← a reviewer instead of a person on ask, with a hand-off
 ```
 
 (`workspace/` and `runs/` are created by the examples and are git-ignored.)
