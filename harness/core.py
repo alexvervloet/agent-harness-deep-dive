@@ -71,7 +71,7 @@ class Harness:
         *,
         policy: PermissionPolicy | None = None,
         sandbox: Sandbox | None = None,
-        approve: Callable[[ToolCall], bool] | None = None,
+        approve: Callable[[ToolCall], bool | tuple[bool, str]] | None = None,
         max_steps: int = 8,
     ):
         self.system = system
@@ -236,14 +236,18 @@ class Harness:
                     )
                     continue
                 if verdict == ASK:
-                    approved = self.approve(call) if self.approve else False
+                    # approve() returns a bool, or (bool, reason) when the approver
+                    # can say why (see harness/review.py). The reason goes back to
+                    # the model, so a block is something it can work around.
+                    answer = self.approve(call) if self.approve else False
+                    approved, reason = answer if isinstance(answer, tuple) else (answer, "")
                     yield PermissionAsked(
                         depth=_depth, call=call, decision=ALLOW if approved else DENY
                     )
                     if not approved:
                         transcript.append(
                             self._tool_result(
-                                call, "Blocked: the user did not approve this action."
+                                call, reason or "Blocked: the user did not approve this action."
                             )
                         )
                         self._checkpoint(
